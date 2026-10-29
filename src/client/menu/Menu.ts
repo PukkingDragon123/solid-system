@@ -31,7 +31,7 @@ export interface MenuCtx {
 }
 
 const STATIONS: Station[] = ['play', 'customize', 'shop', 'collection', 'profile', 'tutorial'];
-const SIDE: Record<Station, string> = { home: '', play: 'left', customize: 'right', shop: 'left', collection: 'left', profile: 'left', tutorial: 'right' };
+const SIDE: Record<Station, string> = { home: '', play: 'left', customize: 'left', shop: 'left', collection: 'left', profile: 'left', tutorial: 'right' };
 const TITLES: Record<Station, string> = { home: '', play: '🎉 Party Table', customize: '🪞 Changing Room', shop: '🛒 Mossy\'s Stall', collection: '💿 Record Shelf', profile: '📒 Scrapbook', tutorial: '🎓 Frog School' };
 
 export class Menu {

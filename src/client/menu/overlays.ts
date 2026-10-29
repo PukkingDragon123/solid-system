@@ -98,7 +98,7 @@ export function openCredits(): void {
   fetch('/api/credits').then((r) => r.json()).then((m: Manifest) => {
     clear(list);
     list.append(
-      h('div', { class: 'tiny' }, `${m.music.length} playable pieces · ${m.metadataOnly} more songs used for metadata-only questions (titles, years, artists — no audio).`),
+      h('div', { class: 'tiny' }, `${m.music.length} playable pieces.${m.metadataOnly ? ` ${m.metadataOnly} imported songs are used for metadata-only questions.` : ''} Real-world releases in trivia rounds are always metadata only (titles, years, artists — no audio).`),
       h('div', { class: 'credit-list' }, ...m.music.map((x) => h('div', { class: 'credit-row' },
         h('b', null, x.title), ` — ${x.artist}`,
         h('div', { class: 'tiny' }, `Composition: ${x.composition} · Recording: ${x.recording}`),
