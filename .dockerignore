@@ -1,0 +1,8 @@
+node_modules
+dist
+data
+logs
+.git
+test-results
+tests/e2e/out
+*.log

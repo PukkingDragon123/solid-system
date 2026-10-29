@@ -312,6 +312,8 @@ export class Cabin {
 
   fit(shot: Shot): Shot {
     if (this.aspect >= 1.2) return shot;
+    // On portrait phones the home view is a close-up of your frog by the fire (the dock does navigation).
+    if (shot === this.stations.home.shot) return { pos: v3(0.6, 3.3, 4.6), target: v3(0.2, 1.7, -2.6), fov: 52 };
     const k = 1 + (1.2 - Math.max(0.45, this.aspect)) * 0.85;
     const pos = shot.target.clone().add(shot.pos.clone().sub(shot.target).multiplyScalar(k));
     return { pos, target: shot.target.clone(), fov: shot.fov };

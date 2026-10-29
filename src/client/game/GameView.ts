@@ -4,7 +4,9 @@
 import * as THREE from 'three';
 import { CATEGORY_BY_ID, EMOTE_BY_ID, MAP_BY_ID, MAPS, MINIGAME_BY_ID, PLAYER_COLORS, SOCIAL_BY_ID, type MapId } from '../../shared/catalog';
 import { ringAngle } from '../../shared/board';
+import { COSMETIC_BY_ID } from '../../shared/cosmetics';
 import { wagerOptions } from '../../shared/game/scoring';
+import { ACHIEVEMENT_BY_ID } from '../../shared/progression';
 import { beatsToSec } from '../../shared/music';
 import type { Phase, PlayerPublic, PublicQuestion, RoomFx, RoomSnapshot, RoomSettings } from '../../shared/protocol';
 import { coverUrl, gloveUrl } from '../art/icons';
@@ -925,8 +927,8 @@ export class GameView {
       this.timers.push(id as unknown as number);
       card.append(h('div', null, `+${mine.xp} XP${mine.levelAfter > mine.levelBefore ? `  ·  LEVEL UP! ${mine.levelBefore} → ${mine.levelAfter}` : ''}`));
       if (mine.levelAfter > mine.levelBefore) this.later(900, () => audio.sfx('levelup'));
-      for (const a of mine.achievements) card.append(h('div', { class: 'tiny' }, `🏅 Achievement: ${a.replace(/_/g, ' ')}`));
-      for (const u of mine.unlocked) card.append(h('div', { class: 'tiny' }, `🎁 Unlocked: ${u.replace(/^[a-z]+_/, '').replace(/_/g, ' ')}`));
+      for (const a of mine.achievements) { const def = ACHIEVEMENT_BY_ID[a]; card.append(h('div', { class: 'tiny' }, `${def?.icon ?? '🏅'} Achievement: ${def?.name ?? a}`)); }
+      for (const u of mine.unlocked) card.append(h('div', { class: 'tiny' }, `🎁 Unlocked: ${COSMETIC_BY_ID[u]?.name ?? u}`));
       if (mine.records.length) card.append(h('div', { class: 'tiny' }, `💿 ${mine.records.length} new record${mine.records.length > 1 ? 's' : ''} for your collection`));
     } else {
       card.append(h('div', { class: 'tiny muted' }, 'Rewards are saved to your profile.'));

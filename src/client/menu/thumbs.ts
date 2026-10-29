@@ -28,15 +28,15 @@ function setup(): boolean {
     renderer.setPixelRatio(1);
     renderer.setSize(SIZE, SIZE, false);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMapping = THREE.NoToneMapping;
     renderer.setClearColor(0x000000, 0);
   } catch {
     failed = true;
     return false;
   }
   scene = new THREE.Scene();
-  scene.add(new THREE.HemisphereLight('#fff6e0', '#4a3a30', 1.6));
-  const key = new THREE.DirectionalLight('#ffffff', 2.2);
+  scene.add(new THREE.HemisphereLight('#fff6e0', '#6a5a50', 1.4));
+  const key = new THREE.DirectionalLight('#ffffff', 1.6);
   key.position.set(2, 4, 5);
   scene.add(key);
   camera = new THREE.PerspectiveCamera(30, 1, 0.05, 20);
@@ -47,8 +47,8 @@ function setup(): boolean {
 function framing(slot: string): [number, number, number, number] {
   switch (slot) {
     case 'hat': return [1.15, 2.2, 0.95, 0.35];
-    case 'face': case 'eyes': return [0.9, 1.55, 0.82, 0.25];
-    case 'mouth': return [0.6, 1.6, 0.6, 0.15];
+    case 'face': case 'eyes': return [0.95, 2.5, 0.8, 0.2];
+    case 'mouth': return [0.6, 2.2, 0.55, 0.15];
     case 'neck': return [0.75, 2.0, 0.45, 0.5];
     case 'clothes': return [0.7, 2.3, 0.45, 0.4];
     default: return [0.85, 2.6, 0.55, 0.4];

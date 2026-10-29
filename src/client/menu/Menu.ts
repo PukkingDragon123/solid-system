@@ -125,6 +125,7 @@ export class Menu {
     this.closePanel();
     this.clearSigns();
     this.endPreview();
+    delete this.ctx.hud.root.dataset.menu;
     c.style.cursor = '';
   }
 
@@ -149,6 +150,7 @@ export class Menu {
     cabin.goTo(station, instant ? 0.01 : 1.4);
     if (instant) cabin.reframe();
     this.layer.dataset.station = station;
+    this.ctx.hud.root.dataset.menu = station;
     cabin.present(null, this.outfit());
     if (station === 'home') {
       this.showSigns();
@@ -373,13 +375,13 @@ export class Menu {
           h('span', null, `${r.players}/${r.max}`),
           h('button', { class: 'chip on', disabled: r.players >= r.max, onclick: () => net.send({ t: 'join', code: r.code }) }, r.phase === 'lobby' ? 'Join' : 'Watch & join'))))
         : h('div', { class: 'tiny' }, 'No public lobbies right now. Quick match opens one that others can find.'),
-      h('button', { class: 'btn wood small', onclick: () => this.open('tutorial') }, '🎓 New here? DJ Lilypadd\'s 2-minute tutorial'));
+      h('button', { class: 'btn wood small', onclick: () => this.open('tutorial') }, '🎓 New here? DJ Lilypadd\'s quick tutorial'));
   }
 
   private tutorialPanel(): HTMLElement {
     const done = store.profile?.tutorialDone;
     return h('div', { class: 'col' },
-      h('p', null, 'DJ Lilypadd teaches the whole game in about two minutes: voting with your glove cursor, a real song clip, finishing lyrics, the chalkboard, and what happens to the last-place frog…'),
+      h('p', null, 'DJ Lilypadd teaches the whole game in a couple of quick rounds: voting with your glove cursor, a real song clip, finishing lyrics, the chalkboard, and what happens to the last-place frog…'),
       h('p', { class: 'tiny' }, 'It runs right here in your browser against practice bots — no server or internet needed.'),
       h('button', { class: 'btn gold', onclick: () => { audio.sfx('go'); this.ctx.startTutorial(); } }, done ? '🎓 Replay the tutorial' : '🎓 Start the tutorial (+100 🪙)'));
   }

@@ -108,7 +108,7 @@ export class Tutorial {
         return me ? [{ playerId: me.id, coins: 0, xp: 0, levelBefore: opts.level, levelAfter: opts.level, achievements: [], unlocked: [], records: [] }] : [];
       },
     }, {
-      rounds: 2, questionsPerRound: 2, timer: 20, difficulty: 'easy',
+      rounds: 2, questionsPerRound: 1, timer: 20, difficulty: 'easy',
       categories: ['classical', 'singalong', 'house_band'], minigames: ['guess_song', 'finish_lyrics'],
       socialRounds: false, randomEvents: false, typedAnswers: false, comeback: true, finalDouble: true,
       map: 'vote', isPublic: false, maxPlayers: 4,
