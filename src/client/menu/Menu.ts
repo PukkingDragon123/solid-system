@@ -31,7 +31,7 @@ export interface MenuCtx {
 }
 
 const STATIONS: Station[] = ['play', 'customize', 'shop', 'collection', 'profile', 'tutorial'];
-const SIDE: Record<Station, string> = { home: '', play: 'left', customize: 'right', shop: 'left', collection: 'left', profile: 'right', tutorial: 'right' };
+const SIDE: Record<Station, string> = { home: '', play: 'left', customize: 'right', shop: 'left', collection: 'left', profile: 'left', tutorial: 'right' };
 const TITLES: Record<Station, string> = { home: '', play: '🎉 Party Table', customize: '🪞 Changing Room', shop: '🛒 Mossy\'s Stall', collection: '💿 Record Shelf', profile: '📒 Scrapbook', tutorial: '🎓 Frog School' };
 
 export class Menu {
@@ -219,8 +219,7 @@ export class Menu {
       const el = h('button', { class: `menu-sign${st === 'play' ? ' hot' : ''}`, onclick: () => this.open(st) }, def.label);
       if (st === 'tutorial' && store.profile && !store.profile.tutorialDone) el.appendChild(h('span', { class: 'sign-new' }, 'NEW'));
       const anchor = this.ctx.hud.anchor(el, () => def.sign);
-      el.classList.remove('anchor');
-      el.classList.add('anchor');
+      el.classList.add('clickable');
       this.signs.set(st, anchor);
     }
   }

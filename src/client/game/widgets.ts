@@ -56,12 +56,21 @@ export async function qrCanvas(text: string): Promise<HTMLCanvasElement> {
 }
 
 export function emoteBar(emotes: string[], onEmote: (id: string) => void): HTMLElement {
+  // Collapsed to one button so it never covers answers; tap to open the emote wheel.
+  const list = h('div', { class: 'emotes' });
   const bar = h('div', { class: 'emote-bar wood dark' });
+  const toggle = h('button', { class: 'emote-toggle', title: 'Emotes', 'aria-label': 'Emotes', 'aria-expanded': 'false', onclick: (ev: Event) => {
+    ev.stopPropagation();
+    const open = !bar.classList.contains('open');
+    bar.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+  } }, '😀');
   for (const id of emotes.slice(0, 8)) {
     const e = EMOTE_BY_ID[id];
     if (!e) continue;
-    bar.appendChild(h('button', { title: e.name, onclick: (ev: Event) => { ev.stopPropagation(); onEmote(id); } }, e.icon));
+    list.appendChild(h('button', { title: e.name, onclick: (ev: Event) => { ev.stopPropagation(); onEmote(id); bar.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); } }, e.icon));
   }
+  bar.append(toggle, list);
   return bar;
 }
 

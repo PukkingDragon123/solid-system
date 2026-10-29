@@ -110,7 +110,7 @@ export class Cabin {
     const chair = P.armchair('#a8382e');
     chair.position.set(0.3, 0, -2.6);
     chair.rotation.y = 0.25;
-    chair.scale.setScalar(1.9);
+    chair.scale.setScalar(1.5);
     s.add(chair);
     const side = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.45, 0.9, 12), new THREE.MeshStandardMaterial({ color: '#6a4428' }));
     side.position.set(-1.7, 0.45, -2.4);
@@ -232,11 +232,25 @@ export class Cabin {
     s.add(stall);
     this.tag(stall, 'shop');
     this.merchant = new FrogActor({ ...DEFAULT_OUTFIT, skin: 'skin_purple', hat: 'hat_tophat', neck: 'neck_bowtie', face: 'face_monocle', mouth: 'mouth_smug', idle: 'idle_chill' }, this.hooks());
-    this.merchant.place(v3(7.5, 0.05, 2.6), -Math.PI / 2);
+    // Mossy stands on a crate so he can see over his own counter.
+    const box = P.crate();
+    box.position.set(7.5, 0, 2.6);
+    box.scale.setScalar(1.3);
+    s.add(box);
+    this.merchant.place(v3(7.5, 0.82, 2.6), -Math.PI / 2);
     this.merchant.root.scale.setScalar(1.4);
     s.add(this.merchant.root);
     this.display.position.set(5.8, 1.55, 2.6);
     s.add(this.display);
+    // Warm lanterns light the stall and the record shelf.
+    for (const [x, y, z, power] of [[6.2, 3.6, 2.6, 7], [6.6, 3.9, -3.6, 6], [-6.2, 3.6, 3.2, 5]] as const) {
+      const lan = P.lantern();
+      lan.position.set(x, y - 0.4, z);
+      s.add(lan);
+      const l = new THREE.PointLight('#ffc98a', power, 8, 1.4);
+      l.position.set(x, y - 0.6, z);
+      s.add(l);
+    }
 
     // Scrapbook desk (profile).
     const desk = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.15, 1.3), new THREE.MeshStandardMaterial({ map: planks('#9a6b3f', [1, 1], 'desk') }));
@@ -281,16 +295,16 @@ export class Cabin {
 
     // Your frog, in the armchair.
     this.frog = new FrogActor(DEFAULT_OUTFIT, this.hooks());
-    this.frog.place(v3(0.3, 0.95, -2.5), 0.25);
+    this.frog.place(v3(0.32, 1.13, -2.45), 0.25);
     s.add(this.frog.root);
 
     this.stations = {
-      home: { shot: { pos: v3(0, 3.6, 6.5), target: v3(0, 1.5, -3), fov: 42 }, frog: v3(0.3, 0.95, -2.5), frogRot: 0.25, sign: v3(0, 0, 0), label: '' },
+      home: { shot: { pos: v3(0, 7.4, 13.8), target: v3(0, 1.5, -0.8), fov: 48 }, frog: v3(0.32, 1.13, -2.45), frogRot: 0.25, sign: v3(0, 0, 0), label: '' },
       play: { shot: { pos: v3(1.2, 3.4, 9), target: v3(3.6, 1.1, 3.6), fov: 40 }, frog: v3(3.0, 1.0, 3.6), frogRot: 0.9, sign: v3(3.8, 2.2, 4.0), label: '▶ PLAY' },
-      customize: { shot: { pos: v3(-3.2, 2.3, 6.6), target: v3(-7, 1.4, 3.0), fov: 40 }, frog: v3(-6.6, 0.05, 3.0), frogRot: -Math.PI / 2 + 0.3, sign: v3(-8.1, 3.8, 3.0), label: '👕 CUSTOMIZE' },
+      customize: { shot: { pos: v3(-3.6, 2.1, -0.6), target: v3(-6.0, 1.05, 3.4), fov: 40 }, frog: v3(-6.5, 0.05, 3.1), frogRot: 2.45, sign: v3(-8.1, 3.8, 3.0), label: '👕 CUSTOMIZE' },
       shop: { shot: { pos: v3(2.0, 3.2, 6.8), target: v3(6.2, 1.5, 2.6), fov: 40 }, frog: v3(4.2, 0.05, 3.2), frogRot: Math.PI / 2, sign: v3(6.6, 4.8, 2.6), label: '🛒 SHOP' },
-      collection: { shot: { pos: v3(3.0, 3.2, -0.5), target: v3(7.7, 2.6, -3.8), fov: 42 }, frog: v3(6.2, 0.05, -2.2), frogRot: Math.PI / 2 + 0.6, sign: v3(7.9, 4.6, -3.8), label: '💿 COLLECTION' },
-      profile: { shot: { pos: v3(-4.6, 4.6, 6.8), target: v3(-4.6, 1.0, 4.0), fov: 40 }, frog: v3(-3.0, 0.05, 4.6), frogRot: -Math.PI / 2, sign: v3(-4.6, 2.0, 4.2), label: '📒 PROFILE' },
+      collection: { shot: { pos: v3(1.4, 3.1, 1.6), target: v3(7.0, 2.0, -3.3), fov: 44 }, frog: v3(6.0, 0.05, -1.9), frogRot: -0.7, sign: v3(7.9, 4.6, -3.8), label: '💿 COLLECTION' },
+      profile: { shot: { pos: v3(-5.6, 4.4, 7.4), target: v3(-5.4, 1.0, 4.2), fov: 40 }, frog: v3(-3.0, 0.05, 4.6), frogRot: -Math.PI / 2, sign: v3(-4.6, 2.0, 4.2), label: '📒 PROFILE' },
       tutorial: { shot: { pos: v3(-3.0, 3.2, -1.0), target: v3(-8.4, 3.0, -3.6), fov: 40 }, frog: v3(-6.8, 0.05, -2.6), frogRot: -Math.PI / 2 - 0.3, sign: v3(-8.3, 4.8, -3.6), label: '🎓 TUTORIAL' },
     };
     this.rig.cut(this.stations.home.shot);

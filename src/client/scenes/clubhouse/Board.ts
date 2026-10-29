@@ -223,7 +223,7 @@ export class Board {
     }
     face.castShadow = true;
     face.receiveShadow = true;
-    const glow = new THREE.Mesh(new THREE.PlaneGeometry(w * 1.1, d * 1.1), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0, depthWrite: false, toneMapped: false }));
+    const glow = new THREE.Mesh(new THREE.PlaneGeometry(w * 1.25, d * 1.25), new THREE.MeshBasicMaterial({ color: '#ffffff', map: glowTexture(), transparent: true, opacity: 0, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending }));
     glow.rotation.x = -Math.PI / 2;
     glow.position.y = 0.012;
     glow.layers.set(FX_LAYER);
@@ -280,7 +280,7 @@ export class Board {
       else if (it.state === 'wrong') { gm.color.set('#ff4040'); gm.opacity = 0.35; }
       else if (votes.length) { gm.color.set(votes[Math.floor(this.time * 3) % votes.length]); gm.opacity = 0.45; }
       else if (mine === it.opt.id) { gm.color.set('#ffffff'); gm.opacity = 0.4; }
-      else { gm.opacity = Math.min(0.3, it.hovered * 0.2); gm.color.set('#ffffff'); }
+      else { gm.opacity = Math.min(0.45, it.hovered * 0.25); gm.color.set('#fff3b0'); }
       it.face.traverse((o) => {
         const mat = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | THREE.MeshStandardMaterial[] | undefined;
         const mats = Array.isArray(mat) ? mat : mat ? [mat] : [];
@@ -312,4 +312,28 @@ function hash(s: string): number {
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
   return h;
+}
+
+let glowTex: THREE.Texture | null = null;
+
+/** Soft pixel-stepped halo used under hovered / voted / revealed board items. */
+function glowTexture(): THREE.Texture {
+  if (glowTex) return glowTex;
+  const c = document.createElement('canvas');
+  c.width = c.height = 32;
+  const ctx = c.getContext('2d')!;
+  for (let y = 0; y < 32; y++)
+    for (let x = 0; x < 32; x++) {
+      // Rounded-square falloff, quantised into a few bands for a pixel-art look.
+      const dx = Math.max(0, Math.abs(x - 15.5) - 8) / 8;
+      const dy = Math.max(0, Math.abs(y - 15.5) - 8) / 8;
+      const d = Math.min(1, Math.hypot(dx, dy));
+      const a = Math.round((1 - d) * 4) / 4;
+      ctx.fillStyle = `rgba(255,255,255,${a})`;
+      ctx.fillRect(x, y, 1, 1);
+    }
+  glowTex = new THREE.CanvasTexture(c);
+  glowTex.magFilter = THREE.NearestFilter;
+  glowTex.minFilter = THREE.NearestFilter;
+  return glowTex;
 }
