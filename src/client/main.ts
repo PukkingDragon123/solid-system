@@ -9,6 +9,7 @@ import { GameView, type GameCtx } from './game/GameView';
 import { Tutorial } from './game/Tutorial';
 import { Menu } from './menu/Menu';
 import { askName, closeModal, openCredits, openSettings } from './menu/overlays';
+import { LocalServer, OFFLINE } from './net/LocalServer';
 import { Net } from './net/Net';
 import { PixelRenderer } from './render/PixelRenderer';
 import { Cabin, type Station } from './scenes/cabin/Cabin';
@@ -52,7 +53,7 @@ class App {
   club!: Clubhouse;
   game!: GameView;
   menu!: Menu;
-  readonly net = new Net();
+  readonly net: Net = OFFLINE ? new LocalServer() : new Net();
   mode: Mode = 'cabin';
   private tutorial: Tutorial | null = null;
   private tutorialView: GameView | null = null;
