@@ -29,7 +29,7 @@ const ACTION_DUR: Record<string, number> = {
   wave: 1.6, laugh: 2.2, hop: 0.8, clap: 1.6, shock: 1.4, cry: 2.4, love: 2, angry: 1.8, dance: 3, burp: 1.8,
   flex: 1.8, facepalm: 1.8, faint: 3.2, shrug: 1.5, think: 2.4, party: 2.2, bow: 1.4, sleep: 3.5, sus: 2.2,
   airguitar: 2.6, backflip: 1.1, catchFly: 2.2, scratch: 1.8, fallChair: 3.2, gasp: 1.6, point: 2.2,
-  celebrate: 3, bonked: 1.2, nod: 0.8, cheer: 1.6, pointLaugh: 3,
+  celebrate: 3, bonked: 1.2, nod: 0.8, cheer: 1.6, pointLaugh: 3, swing: 0.32,
 };
 
 export class FrogActor {
@@ -463,6 +463,10 @@ export class FrogActor {
         if (k > 0.18 && !a.data) { a.data = { hit: 1 }; this.hooks.fx?.('stars', this.headPos(), 4); this.hooks.fx?.('dust', this.root.position.clone(), 6); }
         return f > 0.5 ? 0.25 : 0;
       }
+      case 'swing':
+        m.armR.rotation.set(-2.8 + ease.out(k) * 2.4, 0, 0.2);
+        m.rig.rotation.x = 0.15 * k;
+        return 0.25;
       case 'point':
         m.armR.rotation.set(-1.45, 0, 0.15);
         m.rig.rotation.x = -0.05;
