@@ -48,6 +48,8 @@ export class Cabin {
   private hover: THREE.Object3D | null = null;
   private mirror: Reflector;
   turntableSpin = 0;
+  /** Viewport aspect; portrait screens pull every shot back so the station still fits. */
+  aspect = 16 / 9;
   readonly stations: Record<Station, StationDef>;
   sfx: (name: string) => void = () => {};
 
@@ -294,6 +296,18 @@ export class Cabin {
     this.rig.cut(this.stations.home.shot);
   }
 
+  fit(shot: Shot): Shot {
+    if (this.aspect >= 1.2) return shot;
+    const k = 1 + (1.2 - Math.max(0.45, this.aspect)) * 0.85;
+    const pos = shot.target.clone().add(shot.pos.clone().sub(shot.target).multiplyScalar(k));
+    return { pos, target: shot.target.clone(), fov: shot.fov };
+  }
+
+  /** Re-frame the current station (after a resize). */
+  reframe(): void {
+    this.rig.cut(this.fit(this.stations[this.station].shot));
+  }
+
   private hooks() {
     return {
       fx: (kind: FxKind, pos: THREE.Vector3, count?: number) => this.particles.frogFx(kind, pos, count),
@@ -316,7 +330,7 @@ export class Cabin {
     const prev = this.station;
     this.station = station;
     const def = this.stations[station];
-    this.rig.go(def.shot, dur);
+    this.rig.go(this.fit(def.shot), dur);
     const from = this.frog.root.position.clone();
     const to = def.frog.clone();
     // Hop off the chair, then hop to the station (two arcs feels livelier than one).
