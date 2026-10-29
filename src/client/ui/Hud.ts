@@ -63,7 +63,8 @@ export class Hud {
       const s = this.project(p, camera);
       if (!s.visible && a.hideOffscreen) { a.el.style.display = 'none'; continue; }
       a.el.style.display = '';
-      a.el.style.transform = `translate(${Math.round(s.x + (a.offset?.[0] ?? 0))}px, ${Math.round(s.y + (a.offset?.[1] ?? 0))}px)`;
+      // `translate` (not `transform`) so each label's CSS centering transform still applies on top.
+      a.el.style.translate = `${Math.round(s.x + (a.offset?.[0] ?? 0))}px ${Math.round(s.y + (a.offset?.[1] ?? 0))}px`;
     }
   }
 

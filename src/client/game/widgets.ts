@@ -38,6 +38,8 @@ export class LilyTimer {
       }
     p.ring(12, 12, 11.5, 1, '#1b1420');
     this.label.textContent = remainingMs > 0 ? String(sec) : '0';
+    // Tutorial phases wait for the player, so there is no countdown to show.
+    this.el.style.visibility = remainingMs > 600_000 ? 'hidden' : '';
     this.el.classList.toggle('hurry', sec <= 5 && remainingMs > 0);
     if (sec !== this.lastSec) {
       this.lastSec = sec;

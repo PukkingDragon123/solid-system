@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { MAP_BY_ID } from '../../shared/catalog';
-import type { Outfit } from '../../shared/cosmetics';
+import { COSMETIC_BY_ID, type Outfit } from '../../shared/cosmetics';
 import { levelFromXp } from '../../shared/progression';
 import type { PublicRoomInfo } from '../../shared/protocol';
 import type { CoverSpec } from '../../shared/content';
@@ -44,6 +44,10 @@ export class Menu {
   selected: string | null = null;
   pendingBots = 0;
   rooms: PublicRoomInfo[] = [];
+  /** Item we asked the server to buy; celebrated when it shows up as owned. */
+  awaitBuy: string | null = null;
+  /** When the current shop state arrived (for the deal countdown). */
+  shopAt = Date.now();
   private signs = new Map<Station, Anchor>();
   private panel: HTMLElement | null = null;
   private panelBody: HTMLElement | null = null;
@@ -93,7 +97,7 @@ export class Menu {
       window.addEventListener('keydown', this.onKey);
       this.unsub.push(
         store.on('profile', () => this.onProfile()),
-        store.on('shop', () => { if (this.station === 'shop') this.rerender(); }),
+        store.on('shop', () => { this.shopAt = Date.now(); if (this.station === 'shop') this.rerender(); }),
         store.on('records', () => { this.fillShelf(); if (this.station === 'collection') this.rerender(); }),
         store.on('room', () => this.syncParty()),
         this.ctx.net.on('rooms', (m) => { this.rooms = m.rooms; if (this.station === 'play') this.rerender(); }),
@@ -245,6 +249,7 @@ export class Menu {
     const p = store.profile;
     if (!p) { this.coinEl.textContent = 'Connecting…'; return; }
     const lv = levelFromXp(p.xp);
+    if (this.awaitBuy && p.owned.includes(this.awaitBuy)) this.celebrateBuy(this.awaitBuy);
     clear(this.coinEl);
     this.coinEl.append(
       h('span', { class: 'coins' }, `🪙 ${fmt(p.coins)}`),
@@ -253,6 +258,18 @@ export class Menu {
     if (!this.preview) this.ctx.cabin.setOutfit(p.outfit);
     if (this.station !== 'home') this.rerender();
     else this.showSigns();
+  }
+
+  private celebrateBuy(id: string): void {
+    this.awaitBuy = null;
+    const cabin = this.ctx.cabin;
+    audio.sfx('buy');
+    audio.sfx('cheer');
+    cabin.merchant.play('cheer', true);
+    cabin.frog.play('celebrate', true);
+    cabin.particles.frogFx('confetti', cabin.merchant.headPos(), 30);
+    const def = COSMETIC_BY_ID[id];
+    this.ctx.hud.toast(`🛍️ ${def?.name ?? 'Item'} is yours! Find it in the changing room.`, 'wood');
   }
 
   private syncParty(): void {
