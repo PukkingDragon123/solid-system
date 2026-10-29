@@ -22,6 +22,12 @@ export interface Client {
   send(msg: S2C): void;
 }
 
+
+/** Test-only: LOO_TIME_SCALE=10 runs every room clock 10× faster (used by the e2e suite). */
+const TIME_SCALE = Math.max(1, Math.min(50, Number(process.env.LOO_TIME_SCALE) || 1));
+const EPOCH = Date.now();
+const clockNow = TIME_SCALE === 1 ? () => Date.now() : () => EPOCH + (Date.now() - EPOCH) * TIME_SCALE;
+
 export class RoomManager {
   readonly rooms = new Map<string, Room>();
   private clientsByPlayer = new Map<string, Client>();
@@ -42,8 +48,8 @@ export class RoomManager {
     const code = this.newCode();
     const rng = mulberry32(randomInt(2 ** 31));
     const room: Room = new Room(code, {
-      now: () => Date.now(),
-      setTimer: (fn, ms) => setTimeout(fn, ms),
+      now: clockNow,
+      setTimer: (fn, ms) => setTimeout(fn, ms / TIME_SCALE),
       clearTimer: (h) => clearTimeout(h as NodeJS.Timeout),
       rng,
       content: this.content(),
